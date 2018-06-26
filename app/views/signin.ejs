@@ -3,12 +3,7 @@
 <a href="/">Home</a>
 <h1>SignIn Form</h1>
 <% if(!currentUser){ %>
-	<form action="/signin" method="POST">
-	    <input type="text" name="username" placeholder="username">
-	    <input type="password" name="password" placeholder="password">
-	    <button>SignIn</button>
-	</form>
-	New user? <a href="/signup">SignUp here!</a>
+	<a href="/signin/facebook">SignIn with Facebook</a>
 <% } else { %>
 	<h1>You are already signed in!</h1>
 <% } %>

@@ -1,21 +1,12 @@
-var port  = process.env.PORT || 3079,
-    dburi = process.env.DBURI || "mongodb://localhost/auth_sample";
+var port  = process.env.PORT || 3079;
 // require npm packages
-var express       = require("express"),
-    mongoose      = require("mongoose"),
-    passport      = require("passport"),
-    bodyParser    = require("body-parser"),
-    LocalStrategy = require("passport-local"),
-    app           = express();
-// require models
-var User          = require("./app/models/User.model");
+var express    = require("express"),
+    passport   = require("passport"),
+    bodyParser = require("body-parser"),
+    fbStrategy = require("passport-facebook").Strategy,
+    app        = express();
 // require routes
 var indexRoute    = require("./app/routes/index.route");
-// tell mongoose to use bluebird or native ES6 promise library
-// mongoose.Promise = global.Promise; // native ES6 promise library
-mongoose.Promise = require('bluebird');
-// connect to database
-mongoose.connection.openUri(dburi);
 // set views directory path
 app.set("views", "./app/views");
 // set templating engine to ejs
@@ -25,15 +16,38 @@ app.use(express.static("public"));
 // passport configuration
 app.use(require("express-session")({
     secret: "thisissecretstring",
-    cookie: {maxAge: 12*60*60*1000},
-    resave: false,
-    saveUninitialized: false
+    resave: true,
+    saveUninitialized: true
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+if(process.env.NODE_ENV !== 'production'){
+    // if app is running on localhost
+    var key       = require("./config/config.json"),
+        appId     = key.appid,
+        appSecret = key.appsecret;
+} else {
+    // if app is running on hosting service
+    var appId     = process.env.APPID,
+        appSecret = process.env.APPSECRET;
+}
+passport.use(new fbStrategy(
+    {
+        clientID: appId,
+        clientSecret: appSecret,
+        callbackURL: '/signin/facebook/return',
+        enableProof: true,
+        profileFields: ['id', 'displayName'] // 'email' , 'birthday'
+    }, function(accessToken, refreshToken, profile, cb){
+        return cb(null, profile);
+    }
+));
+passport.serializeUser(function(user, cb){
+    cb(null, user);
+});
+passport.deserializeUser(function(obj, cb){
+    cb(null, obj);
+});
 // middleware to tell that currentUser is req.user
 app.use(function(req, res, next){
     res.locals.currentUser = req.user;
@@ -46,4 +60,4 @@ app.use(indexRoute);
 // listen to the port
 app.listen(port, function(){
     console.log("Server started...");
-})
+});

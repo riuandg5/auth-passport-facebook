@@ -5,8 +5,6 @@ var express = require("express"),
 var passport = require("passport");
 // require request
 var request  = require("request");
-// require models
-var User = require("../models/User.model");
 // require middleware
 var middleware = require("../middleware");
 // root route to homepage
@@ -17,52 +15,32 @@ router.get("/", function(req, res){
 router.get("/secret", middleware.isLoggedIn, function(req, res){
     res.render("secret");
 });
-// route to signup form
-router.get("/signup", function(req, res){
-   res.render("signup"); 
-});
-// route to post signup form data to database and register user
-router.post("/signup", function(req, res){
-    var newUser = new User({username: req.body.username});
-    User.register(newUser, req.body.password, function(err, user){
-        if(err){
-            console.log(err);
-            return res.render('signup');
-        }
-        passport.authenticate("local")(req, res, function(){
-           res.redirect("/");
-        });
-    });
-});
 // route to signin form
 router.get("/signin", function(req, res){
    res.render("signin"); 
 });
-// route to post signin form data
-router.post("/signin", passport.authenticate("local", {successRedirect: "/", failureRedirect: "/signin"}), function(req, res){
-});
-// route to password reset form
-router.get("/reset", middleware.isLoggedIn, function(req, res){
-   res.render("reset");
-});
-// route to post password reset form and change password
-router.post("/reset", function(req, res){
-    User.findById(req.body.uid, function(err, user){
-        if(err){
-            console.log(err);
+// route to get signed which is handled by facebook
+router.get('/signin/facebook',
+    passport.authenticate(
+        'facebook',
+        {
+            authType: 'rerequest',
+            // scope: [
+            //     'email',
+            //     'user_birthday'
+            // ]
         }
-        user.setPassword(req.body.newpwd, function(err, user){
-            if(err){
-                console.log(err);
-            }
-            user.save(function(err){
-                if(err){
-                    console.log(err);
-                }
-                res.redirect("/signout");
-            });
-        });
-    });
+    )
+);
+// route to return
+router.get('/signin/facebook/return',
+    passport.authenticate(
+        'facebook',
+        {
+            successRedirect: '/',
+            failureRedirect: '/signin'
+        },
+    ), function(req, res){
 });
 // route to signout
 router.get("/signout", function(req, res){
