@@ -25,10 +25,10 @@ router.get('/signin/facebook',
         'facebook',
         {
             authType: 'rerequest',
-            // scope: [
-            //     'email',
-            //     'user_birthday'
-            // ]
+            scope: [
+                'public_profile',
+                'email'
+            ]
         }
     )
 );

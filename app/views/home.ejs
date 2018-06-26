@@ -5,7 +5,7 @@
 <a href="/secret">Go to secret page!</a>
 <% if(currentUser){ %>
 	<a href="/signout">SignOut</a>
-	<p>Current User : <%= currentUser.displayName %> | <%= currentUser.id %></p>
+	<p>Current User : <%= currentUser.name %> | <%= currentUser.id %></p>
 <% } %>
 
 <% include partials/footer %>

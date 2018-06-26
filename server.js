@@ -39,7 +39,7 @@ passport.use(new fbStrategy(
         clientSecret: appSecret,
         callbackURL: backUrl,
         enableProof: true,
-        profileFields: ['id', 'displayName'] // 'email' , 'birthday'
+        profileFields: ['id', 'email', 'displayName', 'picture.type(large)']
     }, function(accessToken, refreshToken, profile, cb){
         return cb(null, profile);
     }
@@ -52,7 +52,11 @@ passport.deserializeUser(function(obj, cb){
 });
 // middleware to tell that currentUser is req.user
 app.use(function(req, res, next){
-    res.locals.currentUser = req.user;
+    if(req.user){
+        res.locals.currentUser = req.user._json;
+    } else {
+        res.locals.currentUser = req.user;
+    }
     next();
 });
 // use body-parser
