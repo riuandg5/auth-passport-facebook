@@ -25,17 +25,19 @@ if(process.env.NODE_ENV !== 'production'){
     // if app is running on localhost
     var key       = require("./config/config.json"),
         appId     = key.appid,
-        appSecret = key.appsecret;
+        appSecret = key.appsecret,
+        backUrl   = '/signin/facebook/return';
 } else {
     // if app is running on hosting service
     var appId     = process.env.APPID,
-        appSecret = process.env.APPSECRET;
+        appSecret = process.env.APPSECRET,
+        backUrl   = process.env.BACKURL+'/signin/facebook/return';
 }
 passport.use(new fbStrategy(
     {
         clientID: appId,
         clientSecret: appSecret,
-        callbackURL: '/signin/facebook/return',
+        callbackURL: backUrl,
         enableProof: true,
         profileFields: ['id', 'displayName'] // 'email' , 'birthday'
     }, function(accessToken, refreshToken, profile, cb){

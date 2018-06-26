@@ -7,7 +7,7 @@ Authentication sample in Express app using facebook strategy of passport.js
 + Enter display name for your app (auth-passport-social) and click on `Create App ID`.
 + 'Add Product' page will open. Look for 'Facebook Login' and click on `Set Up`.
 + 'Quickstart guide' will open. Click on 'Web'.
-+ Enter site URL (http://localhost:3079), click `Save` and then `Continue`.
++ Enter site URL (http://localhost:3079 or hosting_service_provided_url), click `Save` and then `Continue`.
 + Now goto `Settings>Basic` from left panel.
 + In Basic settings copy `App Id` and `App Secret` and paste them in `config\config.json` or in environment variables of your hosting service.
   - ```
@@ -18,7 +18,8 @@ Authentication sample in Express app using facebook strategy of passport.js
 	}
 	```
   - ```
-  	// environment variables on hosting service
+  	// set environment variables on hosting service
   	APPID = your_app_id
   	APPSECRET = your_app_secret
+    BACKURL = hosting_service_provided_url
   	```
