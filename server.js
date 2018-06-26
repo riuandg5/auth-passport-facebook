@@ -39,7 +39,7 @@ passport.use(new fbStrategy(
         clientSecret: appSecret,
         callbackURL: backUrl,
         enableProof: true,
-        profileFields: ['id', 'displayName', 'email', 'profile_pic'] // 'email' , 'birthday'
+        profileFields: ['id', 'displayName'] // 'email' , 'birthday'
     }, function(accessToken, refreshToken, profile, cb){
         return cb(null, profile);
     }
