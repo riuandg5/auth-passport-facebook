@@ -38,13 +38,16 @@ router.get('/signin/facebook/return',
         'facebook',
         {
             successRedirect: '/',
-            failureRedirect: '/signin'
+            failureRedirect: '/signin',
+            failureFlash: "Signin failed!",
+            successFlash: "Successfully SignedIn!"
         },
     ), function(req, res){
 });
 // route to signout
 router.get("/signout", function(req, res){
     req.logout();
+    req.flash("success", "Successfully SignedOut!");
     res.redirect("/");
 });
 // export express router to use in main app

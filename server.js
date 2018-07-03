@@ -4,6 +4,7 @@ var express    = require("express"),
     passport   = require("passport"),
     bodyParser = require("body-parser"),
     fbStrategy = require("passport-facebook").Strategy,
+    flash      = require("connect-flash");
     app        = express();
 // require routes
 var indexRoute    = require("./app/routes/index.route");
@@ -19,6 +20,7 @@ app.use(require("express-session")({
     resave: true,
     saveUninitialized: true
 }));
+app.use(flash()); // use flash for flash messages
 app.use(passport.initialize());
 app.use(passport.session());
 if(process.env.NODE_ENV !== 'production'){
@@ -50,13 +52,19 @@ passport.serializeUser(function(user, cb){
 passport.deserializeUser(function(obj, cb){
     cb(null, obj);
 });
-// middleware to tell that currentUser is req.user
+// middleware to send variables to every template page
 app.use(function(req, res, next){
     if(req.user){
+        // if user exist set currentUser to req.user._json
         res.locals.currentUser = req.user._json;
     } else {
+        // if user doesn't exist set currentUser to req.user
         res.locals.currentUser = req.user;
     }
+    // success and error message variables for flash
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+
     next();
 });
 // use body-parser
